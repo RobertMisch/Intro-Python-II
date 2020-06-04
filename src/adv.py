@@ -34,44 +34,72 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#[OV] [TR]
+# print(room['treasure'])
+# [OV] [TR]
 # |     |
-#[FO]-[NA]
+# [FO]-[NA]
 # |
-#[OT]
+# [OT]
 
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
-newPlayer= Player('myname','outside',['item1','item2'])
+newPlayer = Player('myname', room['outside'], ['item1', 'item2'])
 print(newPlayer)
 
 # Write a loop that:
-running=True
+running = True
 while(running):
 #
 # * Prints the current room name
-    current_location=newPlayer.get_location
-    print(current_location)
+    current_location = newPlayer.location
+    # current_location=room[newPlayer.location]
 # * Prints the current description (the textwrap module might be useful here).
-    print(room[f"{current_location}"].get_description)
+    print(f"{current_location.get_description()}\n")
 # * Waits for user input and decides what to do.
-    input = input("what action would you like to take? : ")
-#
+    command = input("what action would you like to take? : ")
+
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
-#
-    if(input=="q"):
+    if(command == "n"):
+        if(current_location.n_to != None):
+            print("moving north\n")
+            # print(current_location.n_to)
+            newPlayer.location = current_location.n_to
+        else:
+            print("You are unable to continue north\n")
+    elif(command == "e"):
+        if(current_location.e_to != None):
+            print("moving east")
+            newPlayer.location = current_location.e_to 
+        else:
+            print("You are unable to continue east\n")
+    elif(command == "s"):
+        if(current_location.s_to != None):
+            print("moving south")
+            newPlayer.location = current_location.s_to
+        else:
+            print("You are unable to continue south\n")
+    elif(command=="w"):
+        if(current_location.w_to != None):
+            print("moving west")
+            newPlayer.location = current_location.w_to
+        else:
+            print("You are unable to continue west\n")
+    elif(command=="q"):
         print("Goodbye!")
+        running=False
         sys.exit(1)
+    else:
+        print("I didn't quite catch that, plase put in n,e,s,w, or q to quit")
 # If the user enters "q", quit the game.
 
 
 
 
-#stuff from class
+# stuff from class
 # #define a store using OOP principals
 
 # class Store:
@@ -122,10 +150,10 @@ while(running):
 # selection = input("select the department number: ")
 # print(f"you selected Department {selection}, {my_store.departments[int(selection)-1].get_name()}")
 
-#a couple things that we can think about fixing
-#there's no way to access departments easily outside of our store class
-#fixed sorta, but we need to not pull from the input array as the source of truth
-#fixed to taking just from my_store and callind get name for the dept
+# a couple things that we can think about fixing
+# there's no way to access departments easily outside of our store class
+# fixed sorta, but we need to not pull from the input array as the source of truth
+# fixed to taking just from my_store and callind get name for the dept
 
-#streamline adding departments to our store
-#adding a method on the store class that will taking a list of strings and make them departments
+# streamline adding departments to our store
+# adding a method on the store class that will taking a list of strings and make them departments

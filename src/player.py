@@ -11,4 +11,5 @@ class Player:
             inventory= inventory + " " + item + "|"
         return f"name: {self.name}, location: {self.location}, items:{inventory}"
     def get_location(self):
-        return f"{self.location}"
+        return self.location
+    
