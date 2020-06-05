@@ -99,29 +99,22 @@ while(running):
     elif(command[0]=="take"):
         if(command[1]):
             # print(f"you take {command[1]}")
-            if(current_location.check_items().length>=1):
-                newPlayer.take_items(current_location.take_items())
-
+            if(len(current_location.check_items())>=1):
+                newPlayer.take_items(current_location.take_items(command[1]))
         else:
             print("please write what you would like to take in the format 'take item'\n")
     elif(command[0]=="drop"):
-        if(current_location.w_to != None):
-            print("moving west")
-            # current_location = 
+        if(command[1]):
+            current_location.add_item(newPlayer.drop_item(command[1]))
+            print(f"you drop the {command[1]} into the room")
         else:
             print("You are unable to continue west\n")
-    elif(command[0]=="investigate"):
-        if(current_location.w_to != None):
-            print("moving west")
-            newPlayer.location = current_location.w_to
-        else:
-            print("You are unable to continue west\n")
-    elif(command[0]=="check"):
-        if(current_location.w_to != None):
-            print("moving west")
-            newPlayer.location = current_location.w_to
-        else:
-            print("You are unable to continue west\n")
+    elif(command[0]=="check_items"):
+        inventory="Bag: "
+        # print(newPlayer.check_items()[0].name)
+        for item in newPlayer.check_items():
+            inventory=inventory + item.name + ", " 
+        print(inventory)
     elif(command[0]=="q"):
         print("Goodbye!")
         running=False

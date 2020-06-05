@@ -16,7 +16,16 @@ class Room:
         return (self.description).format(self=self)
     def check_items(self):
         return self.items
-    def take_items(self):
-        given_items=self.items
-        self.items=[]
-        return given_items
+    def take_items(self, taking):
+        given_item=""
+        # print(taking)
+        for index, item in enumerate(self.items):
+            # print(taking)
+            # print(item)
+            if(item.name == taking):
+                given_item=item
+                del self.items[index]
+        return given_item
+    def add_item(self, recieved):
+        self.items.append(recieved)
+

@@ -15,9 +15,14 @@ class Player:
     def check_items(self):
         return self.items
     def take_items(self, recieved):
+        # for item in recieved:
+        # print(recieved)
         self.items.append(recieved)
-        confirmation = ""
-        for item in recieved:
-            confirmation= confirmation + item.name
-        return print(f"picked up {confirmation}")
-    
+        return print(f"picked up {recieved.name}")
+    def drop_item(self, recieved):
+        dropping=""
+        for index, item in enumerate(self.items):
+            if recieved == item.name:
+                dropping = item
+                del self.items[index]
+                return dropping
