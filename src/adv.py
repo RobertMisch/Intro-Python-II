@@ -1,25 +1,26 @@
 from room import Room
 from player import Player
+from item import Item
 import sys
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons",[Item("small_flowers","a pile of small flowers")]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""",[Item("torch","light is convinient")]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [Item("broken_rope","perhaps a use could be found for this")]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""",[Item("dusty_cloth", "I wonder what this cloth was before")]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", [Item("gold_coin","I guess this works"), Item("an_annoying_dog","seems to want the small gold coin, but cannot pick it up")]),
 }
 
 
@@ -46,7 +47,7 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-newPlayer = Player('myname', room['outside'], ['item1', 'item2'])
+newPlayer = Player('myname', room['outside'], [])
 print(newPlayer)
 
 # Write a loop that:
@@ -57,38 +58,71 @@ while(running):
     current_location = newPlayer.location
     # current_location=room[newPlayer.location]
 # * Prints the current description (the textwrap module might be useful here).
-    print(f"{current_location.get_description()}\n")
+    room_items ="" 
+    for i in current_location.check_items():
+        room_items= room_items + " " + i.name
+    if room_items=="":
+        room_items="nothing"
+    print(f"{current_location.get_description()}\n you search the room and find {room_items}")
 # * Waits for user input and decides what to do.
     command = input("what action would you like to take? : ")
+    # print(command)
+    command=command.lower().split(" ")
+    # print(command)
 
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
-    if(command == "n"):
+    if(command[0] == "n"):
         if(current_location.n_to != None):
             print("moving north\n")
-            # print(current_location.n_to)
             newPlayer.location = current_location.n_to
         else:
             print("You are unable to continue north\n")
-    elif(command == "e"):
+    elif(command[0] == "e"):
         if(current_location.e_to != None):
             print("moving east")
             newPlayer.location = current_location.e_to 
         else:
             print("You are unable to continue east\n")
-    elif(command == "s"):
+    elif(command[0] == "s"):
         if(current_location.s_to != None):
             print("moving south")
             newPlayer.location = current_location.s_to
         else:
             print("You are unable to continue south\n")
-    elif(command=="w"):
+    elif(command[0]=="w"):
         if(current_location.w_to != None):
             print("moving west")
             newPlayer.location = current_location.w_to
         else:
             print("You are unable to continue west\n")
-    elif(command=="q"):
+    elif(command[0]=="take"):
+        if(command[1]):
+            # print(f"you take {command[1]}")
+            if(current_location.check_items().length>=1):
+                newPlayer.take_items(current_location.take_items())
+
+        else:
+            print("please write what you would like to take in the format 'take item'\n")
+    elif(command[0]=="drop"):
+        if(current_location.w_to != None):
+            print("moving west")
+            # current_location = 
+        else:
+            print("You are unable to continue west\n")
+    elif(command[0]=="investigate"):
+        if(current_location.w_to != None):
+            print("moving west")
+            newPlayer.location = current_location.w_to
+        else:
+            print("You are unable to continue west\n")
+    elif(command[0]=="check"):
+        if(current_location.w_to != None):
+            print("moving west")
+            newPlayer.location = current_location.w_to
+        else:
+            print("You are unable to continue west\n")
+    elif(command[0]=="q"):
         print("Goodbye!")
         running=False
         sys.exit(1)
