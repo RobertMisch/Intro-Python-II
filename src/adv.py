@@ -1,24 +1,26 @@
 from room import Room
-
+from player import Player
+from item import Item
+import sys
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons",[Item("small_flowers","a pile of small flowers")]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""",[Item("torch","light is convinient")]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [Item("broken_rope","perhaps a use could be found for this")]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""",[Item("dusty_cloth", "I wonder what this cloth was before")]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", [Item("gold_coin","I guess this works"), Item("an_annoying_dog","seems to want the small gold coin, but cannot pick it up")]),
 }
 
 
@@ -33,19 +35,152 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+# print(room['treasure'])
+# [OV] [TR]
+# |     |
+# [FO]-[NA]
+# |
+# [OT]
+
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+newPlayer = Player('myname', room['outside'], [])
+print(newPlayer)
 
 # Write a loop that:
+running = True
+while(running):
 #
 # * Prints the current room name
+    current_location = newPlayer.location
+    # current_location=room[newPlayer.location]
 # * Prints the current description (the textwrap module might be useful here).
+    room_items ="" 
+    for i in current_location.check_items():
+        room_items= room_items + " " + i.name
+    if room_items=="":
+        room_items="nothing"
+    print(f"{current_location.get_description()}\n you search the room and find {room_items}")
 # * Waits for user input and decides what to do.
-#
+    command = input("what action would you like to take? : ")
+    # print(command)
+    command=command.lower().split(" ")
+    # print(command)
+
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
-#
+    if(command[0] == "n"):
+        if(current_location.n_to != None):
+            print("moving north\n")
+            newPlayer.location = current_location.n_to
+        else:
+            print("You are unable to continue north\n")
+    elif(command[0] == "e"):
+        if(current_location.e_to != None):
+            print("moving east")
+            newPlayer.location = current_location.e_to 
+        else:
+            print("You are unable to continue east\n")
+    elif(command[0] == "s"):
+        if(current_location.s_to != None):
+            print("moving south")
+            newPlayer.location = current_location.s_to
+        else:
+            print("You are unable to continue south\n")
+    elif(command[0]=="w"):
+        if(current_location.w_to != None):
+            print("moving west")
+            newPlayer.location = current_location.w_to
+        else:
+            print("You are unable to continue west\n")
+    elif(command[0]=="take"):
+        if(command[1]):
+            # print(f"you take {command[1]}")
+            if(len(current_location.check_items())>=1):
+                newPlayer.take_items(current_location.take_items(command[1]))
+        else:
+            print("please write what you would like to take in the format 'take item'\n")
+    elif(command[0]=="drop"):
+        if(command[1]):
+            current_location.add_item(newPlayer.drop_item(command[1]))
+            print(f"you drop the {command[1]} into the room")
+        else:
+            print("You are unable to continue west\n")
+    elif(command[0]=="check_items"):
+        inventory="Bag: "
+        # print(newPlayer.check_items()[0].name)
+        for item in newPlayer.check_items():
+            inventory=inventory + item.name + ", " 
+        print(inventory)
+    elif(command[0]=="q"):
+        print("Goodbye!")
+        running=False
+        sys.exit(1)
+    else:
+        print("I didn't quite catch that, plase put in n,e,s,w, or q to quit")
 # If the user enters "q", quit the game.
+
+
+
+
+# stuff from class
+# #define a store using OOP principals
+
+# class Store:
+#     def __init__(self, name, departments):
+#         self.name=name
+#         #departments will be a list strings that we need to make departments
+#         self.departments= self.init_departments(departments)
+
+#     def __str__(self):
+#         #will print out the name of the store
+#         #as well as any departments that the store has (stores can have more than 1 dept)
+#         output= f"{self.name} \n"
+#         for dept in self.departments:
+#             output += "  id: " + str(dept.get_id()) + ", name: " + dept.get_name() + "\n"
+#         return output
+#     def init_departments(self, departments):
+#         #normal version
+#         # instances = []
+#         # for index, dept in enumerate(departments):
+#         #     instances.append(Department(index+1, dept))
+#         # return instances
+#         #list comprehension
+#         return [Department(index+1 , dept) for index, dept in enumerate(departments)]
+
+# #not having it inherit since it didn't make sense to our instructor, make sure to think through if something is distinct
+# class Department:
+#     def __init__(self, id, name):
+#         self.id=id
+#         self.name=name
+#     def __str__(self):
+#         return f"Department {self.id}: {self.name}"
+#     def get_id(self):
+#         return self.id
+
+#     def get_name(self):
+#         return self.name
+
+# departments=[
+#     "running",
+#     "fishing",
+#     "baseball",
+#     "basketball"
+#     ]
+# # Department(4, "basketball") used to have the departments structured like this
+# my_store = Store("The Dugout", departments)
+# print(my_store)
+
+# selection = input("select the department number: ")
+# print(f"you selected Department {selection}, {my_store.departments[int(selection)-1].get_name()}")
+
+# a couple things that we can think about fixing
+# there's no way to access departments easily outside of our store class
+# fixed sorta, but we need to not pull from the input array as the source of truth
+# fixed to taking just from my_store and callind get name for the dept
+
+# streamline adding departments to our store
+# adding a method on the store class that will taking a list of strings and make them departments
